@@ -10,7 +10,7 @@ from alembic import context
 from app.config import database_url
 
 from app.dao.database import Base
-from app.dao.models import User, Transaction
+from app.dao.models import User, Wallet, BaseTransaction, IncomeTransaction, ExpenseTransaction
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

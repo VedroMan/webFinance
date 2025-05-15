@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { faDeleteLeft, faCancel, faComment, faCheck, faIcons, faMessage } from "@fortawesome/free-solid-svg-icons";
+import { faDeleteLeft, faCancel, faCheck, faMessage } from "@fortawesome/free-solid-svg-icons";
 
 const amount = ref("");
 
@@ -50,14 +50,14 @@ const formattedAmount = () => {
       >
         {{ n }}
       </button>
+      <button @click="deleteLast" class="flex-1 bg-gray-500 text-white py-3 rounded-lg text-xl hover:bg-gray-600 transition">
+        <faicon :icon="faDeleteLeft" />
+      </button>
     </div>
 
     <div class="flex gap-4 mt-10 w-full max-w-xs justify-between">
       <button class="flex-1 bg-emerald-500 text-white py-3 rounded-lg text-xl hover:bg-emerald-600 transition">
         <faicon :icon="faCheck" />
-      </button>
-      <button @click="deleteLast" class="flex-1 bg-gray-500 text-white py-3 rounded-lg text-xl hover:bg-gray-600 transition">
-        <faicon :icon="faDeleteLeft" />
       </button>
       <button @click="resetAmount" class="flex-1 bg-red-500 text-white py-3 rounded-lg text-xl hover:bg-red-600 transition">
         <faicon :icon="faCancel" />
