@@ -1,5 +1,4 @@
 
-from typing import List
 from decimal import Decimal
 from sqlalchemy import Integer, Text, ForeignKey, Numeric
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -22,7 +21,7 @@ class User(Base):
 class Wallet(Base):
     __tablename__ = "wallet"
     
-    balance: Mapped[Decimal] = mapped_column(Numeric(precision=10, scale=2), default=Decimal("0.00"))
+    balance: Mapped[Decimal] = mapped_column(Numeric(scale=2), default=Decimal("0.00"))
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), unique=True)
     
     user: Mapped["User"] = relationship(back_populates="wallet", lazy="joined")
