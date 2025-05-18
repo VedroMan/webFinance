@@ -1,6 +1,11 @@
 
 from app.dao.base import BaseDAO
-from app.dao.models import User, Wallet, IncomeTransaction, ExpenseTransaction
+from app.dao.models import (
+    User, 
+    Wallet, 
+    IncomeTransaction, 
+    ExpenseTransaction
+)
 
 class UserDAO(BaseDAO):
     model = User
