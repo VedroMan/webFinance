@@ -129,3 +129,13 @@ class BaseDAO(Generic[T]):
         
     
     # count и доп фильтрации, потом придумаю
+    async def count(self, filters: BaseModel | None = None):
+        filters_dict = filters.model_dump(exclude_unset=True) if filters else {}
+        logger.info(f"Подсчёт количества записей {self.model.__name__} по фильтрам: {filters_dict}")
+        try:
+            query = select(self.model).filter_by(**filters_dict)
+            result = await self._session.execute(query)
+            
+        except SQLAlchemyError as e:
+            #
+            raise

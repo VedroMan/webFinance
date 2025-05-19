@@ -8,9 +8,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     
-    BASE_SITE: str
-    BOT_TOKEN: str
-    ADMIN_ID: str
+    BASE_SITE: str | None = None
+    BOT_TOKEN: str | None = None
+    ADMIN_ID: str | None = None
     
     DB_URL: str = 'sqlite+aiosqlite:///./data/db.sqlite3'
     
