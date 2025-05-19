@@ -4,10 +4,10 @@ from pydantic import BaseModel
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.future import select
-from sqlalchemy import update as sqlalchemy_update, delete as sqlalchemy_delete, func
+from sqlalchemy import update as sqlalchemy_update, delete as sqlalchemy_delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database import Base
+from app.dao.database import Base
 
 from loguru import logger
 
@@ -128,14 +128,16 @@ class BaseDAO(Generic[T]):
             raise
         
     
-    # count и доп фильтрации, потом придумаю
     async def count(self, filters: BaseModel | None = None):
         filters_dict = filters.model_dump(exclude_unset=True) if filters else {}
         logger.info(f"Подсчёт количества записей {self.model.__name__} по фильтрам: {filters_dict}")
         try:
             query = select(self.model).filter_by(**filters_dict)
             result = await self._session.execute(query)
-            
+            count = result.scalar()
+            logger.info(f"Найдено {count} записей")
+            return count
+                    
         except SQLAlchemyError as e:
-            #
+            logger.error(f"Ошибка при подсчете записей: {e}")
             raise
