@@ -14,28 +14,32 @@ router = APIRouter()
 
 templates = Jinja2Templates(directory="app/templates")
 
+# MARK: API
+
+
+
 
 # MARK: Views
 
-async def template_response(request: Request):
+def template_response(request: Request):
     return templates.TemplateResponse("index.html", { "request": request})
 
 @router.get("/")
-async def home_view(request: Request):
+def home_view(request: Request):
     return template_response(request)
     
 @router.get("/balance")
-async def balance_view(request: Request):
+def balance_view(request: Request):
     return template_response(request)
 
 @router.get("/budget")
-async def budget_view(request: Request):
+def budget_view(request: Request):
     return template_response(request)
 
 @router.get("/analytics")
-async def analytics_view(request: Request):
+def analytics_view(request: Request):
     return template_response(request)
 
 @router.get("/settings")
-async def settings_view(request: Request):
+def settings_view(request: Request):
     return template_response(request)
