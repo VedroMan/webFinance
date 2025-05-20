@@ -13,9 +13,13 @@ async_session_maker = async_sessionmaker(engine, class_=AsyncSession)
 
 tz = timezone("Europe/Minsk")
 
+def created_at_time() -> datetime:
+    """ Объект текущего времени для столбца created_at """
+    return datetime.now(tz)
+
 class Base(AsyncAttrs, DeclarativeBase):
     __abstract__ = True
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=created_at_time)
     
