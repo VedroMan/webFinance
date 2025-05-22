@@ -41,5 +41,5 @@ class WalletDAO(BaseDAO[Wallet]):
 class IncomeTransactionDAO(BaseDAO[IncomeTransaction]):
     model = IncomeTransaction
     
-class ExpenseTransactionDao(BaseDAO[ExpenseTransaction]):
+class ExpenseTransactionDAO(BaseDAO[ExpenseTransaction]):
     model = ExpenseTransaction

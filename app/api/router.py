@@ -2,6 +2,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import JSONResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.dao.sessions import get_session_with_commit, get_session_without_commit
 
 from app.api.schemas import (
     WalletModel,
@@ -10,19 +13,69 @@ from app.api.schemas import (
     ExpenseTransactionModel
 )
 
+from app.api.dao import (
+    UserDAO,
+    WalletDAO,
+    ExpenseTransactionDAO,
+    IncomeTransactionDAO
+)
+
+
 router = APIRouter()
 
 templates = Jinja2Templates(directory="app/templates")
 
 # MARK: API
 
+# User
 
+@router.get("/api/wf/telegram-users/")
+async def get_users(session: AsyncSession = Depends(get_session_without_commit)):
+    return await UserDAO(session).read()
 
+@router.get("api/wf/telegram_user/{id}/")
+async def get_user_by_id(id: int, session: AsyncSession = Depends(get_session_without_commit)):
+    return await UserDAO(session).find_one_or_none_by_id(data_id=id)
+
+@router.get("/api/wf/telegram-user/{telegram_id}/")
+async def get_user_by_tg_id(telegram_id: int, 
+                            session: AsyncSession = Depends(get_session_without_commit)):
+    return await UserDAO(session=session).get_user_by_telegram_id(telegram_id)
+
+# Wallet 
+
+@router.get("/api/wf/wallets/")
+async def get_wallets(session: AsyncSession = Depends(get_session_without_commit)):
+    return await WalletDAO(session).read()
+
+@router.get("/api/wf/wallet/{id}/")
+async def get_wallet_by_id(id: int, session: AsyncSession = Depends(get_session_without_commit)):
+    return await WalletDAO(session).find_one_or_none_by_id(data_id=id)
+
+@router.get("/api/wf/wallet/{user_id}/")
+async def get_wallet_by_user_id(user_id: int, 
+                           session: AsyncSession = Depends(get_session_without_commit)):
+    return await WalletDAO(session).get_wallet_by_user_id(user_id)
+
+@router.get("/api/wf/wallet-transactions/{user_id}/")
+async def get_wallet_with_transactions(user_id: int,
+                                       session: AsyncSession = Depends(get_session_without_commit)):
+    return await WalletDAO(session).get_wallet_with_transactions(user_id)
+
+# Expense/Income transactions
+
+@router.get("/api/wf/income-transactions/")
+async def get_income_transactions(session: AsyncSession = Depends(get_session_without_commit)):
+    return await IncomeTransactionDAO(session).read()
+
+# 
+#
+#
 
 # MARK: Views
 
 def template_response(request: Request):
-    return templates.TemplateResponse("index.html", { "request": request})
+    return templates.TemplateResponse("index.html", { "request": request })
 
 @router.get("/")
 def home_view(request: Request):
