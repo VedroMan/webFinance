@@ -5,6 +5,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.dao.database import Base
 
+from typing import Optional
+
 
 class User(Base):
     __tablename__ = "user"
@@ -15,7 +17,7 @@ class User(Base):
     last_name: Mapped[str | None]
     profile_photo: Mapped[str]
     
-    wallet: Mapped["Wallet"] = relationship(back_populates="user", lazy="joined", uselist=False, cascade="all")
+    wallet: Mapped[Optional["Wallet"]] = relationship(back_populates="user", lazy="joined", uselist=False, cascade="all, delete-orphan")
     
 
 class Wallet(Base):
@@ -33,17 +35,17 @@ class BaseTransaction(Base):
     __abstract__ = True
     
     value: Mapped[Decimal] = mapped_column(Numeric(precision=10, scale=2))
-    comment: Mapped[str] = mapped_column(Text(length=256))
+    comment: Mapped[str | None] = mapped_column(Text(length=256))
     wallet_id: Mapped[int] = mapped_column(ForeignKey("wallet.id", ondelete="CASCADE"))
     
     
 class IncomeTransaction(BaseTransaction):
     __tablename__ = "income_transaction"
     
-    wallet: Mapped["Wallet"] = relationship(back_populates="income_transaction", lazy="joined")
+    wallet: Mapped["Wallet"] = relationship(back_populates="income_transactions", lazy="joined")
     
 class ExpenseTransaction(BaseTransaction):
     __tablename__ = "expense_transaction"
     
-    wallet: Mapped["Wallet"] = relationship(back_populates="expense_transaction", lazy="joined")
+    wallet: Mapped["Wallet"] = relationship(back_populates="expense_transactions", lazy="joined")
 
