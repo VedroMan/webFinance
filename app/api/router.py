@@ -9,8 +9,6 @@ from app.dao.sessions import get_session_with_commit, get_session_without_commit
 from app.api.schemas import (
     WalletModel,
     UserModel,
-    IncomeTransactionModel,
-    ExpenseTransactionModel
 )
 
 from app.api.dao import (
@@ -33,14 +31,16 @@ templates = Jinja2Templates(directory="app/templates")
 async def get_users(session: AsyncSession = Depends(get_session_without_commit)):
     return await UserDAO(session).read()
 
-@router.get("api/wf/telegram_user/{id}/")
-async def get_user_by_id(id: int, session: AsyncSession = Depends(get_session_without_commit)):
-    return await UserDAO(session).find_one_or_none_by_id(data_id=id)
-
 @router.get("/api/wf/telegram-user/{telegram_id}/")
 async def get_user_by_tg_id(telegram_id: int, 
                             session: AsyncSession = Depends(get_session_without_commit)):
     return await UserDAO(session=session).get_user_by_telegram_id(telegram_id)
+
+@router.post("/api/wf/telegram-user/")
+async def create_telegram_user(values: UserModel,
+                               session: AsyncSession = Depends(get_session_with_commit)):
+    return await UserDAO(session).create(values)
+
 
 # Wallet 
 
@@ -68,9 +68,20 @@ async def get_wallet_with_transactions(user_id: int,
 async def get_income_transactions(session: AsyncSession = Depends(get_session_without_commit)):
     return await IncomeTransactionDAO(session).read()
 
-# 
-#
-#
+@router.get("/api/wf/income-transaction/{id}/")
+async def get_income_transaction_by_id(id: int, 
+                                       session: AsyncSession = Depends(get_session_without_commit)):
+    return await IncomeTransactionDAO(session).find_one_or_none_by_id(data_id=id)
+
+@router.get("/api/wf/expense-transactions/")
+async def get_expense_transactions(session: AsyncSession = Depends(get_session_without_commit)):
+    return await ExpenseTransactionDAO(session).read()
+
+@router.get("/api/wf/expense-transaction/{id}/")
+async def get_expense_transaction_by_id(id: int,
+                                        session: AsyncSession = Depends(get_session_without_commit)):
+    return await ExpenseTransactionDAO(session).find_one_or_none_by_id(data_id=id)
+
 
 # MARK: Views
 

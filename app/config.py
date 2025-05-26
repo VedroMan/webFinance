@@ -8,9 +8,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     
-    BASE_SITE: str | None = None
-    BOT_TOKEN: str | None = None
-    ADMIN_ID: str | None = None
+    BASE_SITE: str 
+    BOT_TOKEN: str
+    ADMIN_ID: str
     
     DB_URL: str = 'sqlite+aiosqlite:///./data/db.sqlite3'
     
@@ -18,5 +18,5 @@ class Settings(BaseSettings):
         env_file=os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env")
     )
     
-settings = Settings()
+settings = Settings() # type: ignore
 database_url = settings.DB_URL

@@ -3,21 +3,30 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from contextlib import asynccontextmanager
+from asyncio import create_task
+
 from loguru import logger
 
-from app.api.router import router as router_api
+from app.api.router import router
+from app.telegram_bot.methods import dp, bot
 
 import uvicorn
+
+async def start_bot() -> None:
+    logger.info("!Бот запущен!")
+    await dp.start_polling(bot)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("!Сервер запущен!")
+    bot_task = create_task(start_bot())
     yield
+    bot_task.cancel()
     logger.info("!Сервер остановлен!")
 
 app = FastAPI(lifespan=lifespan)
 
-app.include_router(router=router_api)
+app.include_router(router)
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
