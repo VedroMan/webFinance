@@ -7,12 +7,13 @@ from asyncio import create_task
 
 from loguru import logger
 
-from app.api.router import router
+from app.api.router import router as api_router
+from app.views import router as view_router
 from app.telegram_bot.methods import dp, bot
 
 import uvicorn
 
-async def start_bot() -> None:
+async def start_bot():
     logger.info("!Бот запущен!")
     await dp.start_polling(bot)
 
@@ -26,7 +27,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-app.include_router(router)
+app.include_router(api_router)
+app.include_router(view_router)
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 

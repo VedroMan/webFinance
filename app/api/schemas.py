@@ -19,7 +19,7 @@ class UserData(UserModel):
     username: str | None = None
     first_name: str
     last_name: str | None = None
-    profile_photo: str
+    profile_photo: str | None = None
     
 class WalletModel(BaseModel):
     id: int
@@ -36,8 +36,8 @@ class WalletData(WalletModel):
 
 class TransactionModel(BaseModel):
     id: int
-    
     wallet: "WalletModel"
+    
     model_config = ConfigDict(from_attributes=True)
     
 class TransactionData(TransactionModel):

@@ -1,14 +1,13 @@
 
-from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.templating import Jinja2Templates
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dao.sessions import get_session_with_commit, get_session_without_commit
 
 from app.api.schemas import (
-    WalletModel,
-    UserModel,
+    WalletData,
+    UserData,
 )
 
 from app.api.dao import (
@@ -20,10 +19,6 @@ from app.api.dao import (
 
 
 router = APIRouter()
-
-templates = Jinja2Templates(directory="app/templates")
-
-# MARK: API
 
 # User
 
@@ -37,7 +32,7 @@ async def get_user_by_tg_id(telegram_id: int,
     return await UserDAO(session=session).get_user_by_telegram_id(telegram_id)
 
 @router.post("/api/wf/telegram-user/")
-async def create_telegram_user(values: UserModel,
+async def create_telegram_user(values: UserData,
                                session: AsyncSession = Depends(get_session_with_commit)):
     return await UserDAO(session).create(values)
 
@@ -82,28 +77,3 @@ async def get_expense_transaction_by_id(id: int,
                                         session: AsyncSession = Depends(get_session_without_commit)):
     return await ExpenseTransactionDAO(session).find_one_or_none_by_id(data_id=id)
 
-
-# MARK: Views
-
-def template_response(request: Request):
-    return templates.TemplateResponse("index.html", { "request": request })
-
-@router.get("/")
-def home_view(request: Request):
-    return template_response(request)
-    
-@router.get("/balance")
-def balance_view(request: Request):
-    return template_response(request)
-
-@router.get("/budget")
-def budget_view(request: Request):
-    return template_response(request)
-
-@router.get("/analytics")
-def analytics_view(request: Request):
-    return template_response(request)
-
-@router.get("/settings")
-def settings_view(request: Request):
-    return template_response(request)

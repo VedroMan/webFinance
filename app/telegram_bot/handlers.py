@@ -31,3 +31,4 @@ async def register_user(user: UserData):
             return { "error" : f"Ошибка {e.response.status_code}: {e.response.text} "}
         except RequestError as e:
             return { "error" : f"Сбой подключения к API: {str(e)}" }
+        
