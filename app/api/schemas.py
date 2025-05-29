@@ -8,43 +8,44 @@ from pydantic import (
 from decimal import Decimal
 from typing import Optional
 
-class UserModel(BaseModel):
-    id: int
-    wallet: Optional["WalletModel"] = None
-    
-    model_config = ConfigDict(from_attributes=True)
-    
-class UserData(UserModel):
+
+class UserBase(BaseModel):
     telegram_id: int
     username: str | None = None
     first_name: str
     last_name: str | None = None
     profile_photo: str | None = None
-    
-class WalletModel(BaseModel):
+
+class UserModel(UserBase):
     id: int
-    user: "UserModel"
-    income_transactions: list["TransactionData"] = Field(default_factory=list)
-    expense_transactions: list["TransactionData"] = Field(default_factory=list)
+    wallet: Optional["WalletModel"] = None
     
     model_config = ConfigDict(from_attributes=True)
     
-class WalletData(WalletModel):
+    
+class WalletBase(BaseModel):
     balance: Decimal = Field(decimal_places=2, default=Decimal("0.00"))
     user_id: int
 
-
-class TransactionModel(BaseModel):
+class WalletModel(WalletBase):
     id: int
-    wallet: "WalletModel"
+    user: "UserModel"
+    income_transactions: list["TransactionModel"] = Field(default_factory=list)
+    expense_transactions: list["TransactionModel"] = Field(default_factory=list)
     
     model_config = ConfigDict(from_attributes=True)
-    
-class TransactionData(TransactionModel):
+
+
+class TransactionBase(BaseModel):
     value: Decimal = Field(max_digits=10, decimal_places=2)
     comment: str = Field(max_length=256)
     wallet_id: int
     
+class TransactionModel(TransactionBase):
+    id: int
+    wallet: "WalletModel"
+    
+    model_config = ConfigDict(from_attributes=True)
     
 
 UserModel.model_rebuild()

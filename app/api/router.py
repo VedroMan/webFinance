@@ -6,12 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.dao.sessions import get_session_with_commit, get_session_without_commit
 
 from app.api.schemas import (
-    WalletData,
-    UserData,
+    WalletModel,
 )
 
 from app.api.dao import (
-    UserDAO,
     WalletDAO,
     ExpenseTransactionDAO,
     IncomeTransactionDAO
@@ -19,22 +17,6 @@ from app.api.dao import (
 
 
 router = APIRouter()
-
-# User
-
-@router.get("/api/wf/telegram-users/")
-async def get_users(session: AsyncSession = Depends(get_session_without_commit)):
-    return await UserDAO(session).read()
-
-@router.get("/api/wf/telegram-user/{telegram_id}/")
-async def get_user_by_tg_id(telegram_id: int, 
-                            session: AsyncSession = Depends(get_session_without_commit)):
-    return await UserDAO(session=session).get_user_by_telegram_id(telegram_id)
-
-@router.post("/api/wf/telegram-user/")
-async def create_telegram_user(values: UserData,
-                               session: AsyncSession = Depends(get_session_with_commit)):
-    return await UserDAO(session).create(values)
 
 
 # Wallet 

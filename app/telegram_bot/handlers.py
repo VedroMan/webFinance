@@ -5,13 +5,13 @@ from httpx import (
     RequestError
 )
 
-from app.api.schemas import UserData
+from app.api.schemas import UserBase
 from app.config import settings
 
 
 site = settings.BASE_SITE
 
-async def register_user(user: UserData):
+async def register_user(user: UserBase):
     
     url = f"{site}/api/wf/telegram-user/"
     payload = {

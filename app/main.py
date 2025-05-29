@@ -9,6 +9,7 @@ from loguru import logger
 
 from app.api.router import router as api_router
 from app.views import router as view_router
+from app.telegram_bot.router import router as user_router
 from app.telegram_bot.methods import dp, bot
 
 import uvicorn
@@ -29,6 +30,7 @@ app = FastAPI(lifespan=lifespan)
 
 app.include_router(api_router)
 app.include_router(view_router)
+app.include_router(user_router)
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
