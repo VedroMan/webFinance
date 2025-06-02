@@ -21,7 +21,7 @@ async def get_user_by_tg_id(telegram_id: int,
                             session: AsyncSession = Depends(get_session_without_commit)):
     return await UserDAO(session).get_user_by_telegram_id(telegram_id)
 
-@router.post("/api/wf/telegram-user/")
+@router.post("/telegram-user/")
 async def create_telegram_user(values: UserBase,
                                session: AsyncSession = Depends(get_session_with_commit)):
     
@@ -29,7 +29,7 @@ async def create_telegram_user(values: UserBase,
     
     if existing_user:
         return JSONResponse(
-            content={ "message" : "Пользователь уже существует", "telegram_id" : existing_user },
+            content={ "message": "Пользователь уже существует", "user_id": existing_user },
             status_code=200
         )
     

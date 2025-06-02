@@ -1,42 +1,34 @@
 
-from aiogram import Bot, Dispatcher
-from aiogram.filters import Command
-from aiogram.types import Message
+from httpx import (
+    AsyncClient,
+    HTTPStatusError,
+    RequestError
+)
 
-from asyncio import sleep
-
-from app.config import settings
 from app.api.schemas import UserBase
-from app.telegram_bot.handlers import register_user
+from app.config import settings
 
-token = settings.BOT_TOKEN
 
-bot = Bot(token)
-dp = Dispatcher()
+site = settings.BASE_SITE
 
-@dp.message(Command("start"))
-async def start_cmd(message: Message) -> None:
-    user_data = UserBase(
-        telegram_id=message.from_user.id, # type: ignore
-        first_name=message.from_user.first_name, # type: ignore
-        username=message.from_user.username, # type: ignore
-        last_name=message.from_user.last_name, # type: ignore
-        profile_photo=None
-    )
+async def register_user(user: UserBase):
     
-    user_data = await register_user(user_data)
+    url = f"{site}/api/wf/telegram-user/"
+    payload = {
+        "telegram_id": user.telegram_id,
+        "username": user.username,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "profile_photo": user.profile_photo or ""
+    }
     
-    if "error" in user_data:
-        er_message = await message.answer(
-            f"Ошибка регистрации: { user_data['error'] }" 
-        )
-        return
-    
-    if user_data.get("message") == "Пользователь уже существует":
-        name = message.from_user.first_name # type: ignore
-        text_message = await message.answer(
-            f"Вы уже зарегистрированы. С возвращением: { name }!"
-        )
+    async with AsyncClient() as client:
+        try:
+            response = await client.post(url, json=payload)
+            response.raise_for_status()
+            return response.json()
+        except HTTPStatusError as e:
+            return { "error" : f"Ошибка {e.response.status_code}: {e.response.text} "}
+        except RequestError as e:
+            return { "error" : f"Сбой подключения к API: {str(e)}" }
         
-    else:
-        await message.answer("Вы успешно зарегистрированы!!!")
