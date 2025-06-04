@@ -8,27 +8,26 @@ from httpx import (
 from app.api.schemas import UserBase
 from app.config import settings
 
-
-site = settings.BASE_SITE
+base_url = settings.BASE_SITE
 
 async def register_user(user: UserBase):
     
-    url = f"{site}/api/wf/telegram-user/"
-    payload = {
-        "telegram_id": user.telegram_id,
-        "username": user.username,
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-        "profile_photo": user.profile_photo or ""
-    }
+    url = "/telegram-user/"
+    data = user.model_dump()
     
-    async with AsyncClient() as client:
+    async with AsyncClient(base_url=base_url) as client:
         try:
-            response = await client.post(url, json=payload)
+            response = await client.post(url, json=data)
             response.raise_for_status()
             return response.json()
         except HTTPStatusError as e:
-            return { "error" : f"Ошибка {e.response.status_code}: {e.response.text} "}
+            return {
+                "status" : "error",
+                "error" : f"Ошибка {e.response.status_code}: {e.response.text}"
+            }
         except RequestError as e:
-            return { "error" : f"Сбой подключения к API: {str(e)}" }
+            return {
+                "status" : "error",
+                "error" : f"Сбой подключения: {str(e)}"
+            }
         

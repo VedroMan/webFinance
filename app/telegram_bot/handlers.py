@@ -10,30 +10,29 @@ router = Router()
 
 @router.message(Command("start"))
 async def cmd_start(message: Message) -> None:
-    user_data = UserBase(
-        telegram_id=message.from_user.id, # type: ignore
-        first_name=message.from_user.first_name, # type: ignore
-        username=message.from_user.username, # type: ignore
-        last_name=message.from_user.last_name, # type: ignore
-        profile_photo=None
-    )
-    
-    user_data = await register_user(user_data)
-    
-    if "error" in user_data:
-        await message.answer(
-            f"Ошибка регистрации: { user_data['error'] }" 
-        )
+    user = message.from_user
+    if not user:
+        await message.answer("Не удалось получить информацию о пользователе")
         return
     
-    if user_data.get("message") == "Пользователь уже существует":
-        name = message.from_user.first_name # type: ignore
-        await message.answer(
-            f"Вы уже зарегистрированы. С возвращением: { name }!"
-        )
-        
+    user_data = UserBase(
+        telegram_id=user.id,
+        first_name=user.first_name,
+        username=user.username,
+        last_name=user.last_name,
+        profile_photo=""
+    )
+    
+    result = await register_user(user_data)
+    
+    if result["status"] == "exists":
+        await message.answer(f"С возвращением, { user.first_name }!")
+    elif result["status"] == "created":
+        await message.answer("🎉 Регистрация успешна!")
     else:
-        await message.answer("Вы успешно зарегистрированы!!!")
+        err_msg = result.get("message", "Неизвестная ошибка")
+        await message.answer(f"⚠️ Ошибка: {result['err_msg']}")
+        
     
 @router.message(Command("hello"))
 async def cmd_hello(message: Message):
