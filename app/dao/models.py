@@ -15,7 +15,7 @@ class User(Base):
     username: Mapped[str | None]
     first_name: Mapped[str]
     last_name: Mapped[str | None]
-    profile_photo: Mapped[str]
+    profile_photo: Mapped[str | None]
     
     wallet: Mapped[Optional["Wallet"]] = relationship(back_populates="user", lazy="joined", uselist=False, cascade="all, delete-orphan")
     

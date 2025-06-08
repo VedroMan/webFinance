@@ -1,8 +1,8 @@
-"""fix bugs with models
+"""Added nullable for profile_photo column
 
-Revision ID: 176cd30f4fd8
+Revision ID: d3a23fa4ac3a
 Revises: 
-Create Date: 2025-05-25 14:49:57.919557
+Create Date: 2025-06-08 14:56:28.716338
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '176cd30f4fd8'
+revision: str = 'd3a23fa4ac3a'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -26,7 +26,7 @@ def upgrade() -> None:
     sa.Column('username', sa.String(), nullable=True),
     sa.Column('first_name', sa.String(), nullable=False),
     sa.Column('last_name', sa.String(), nullable=True),
-    sa.Column('profile_photo', sa.String(), nullable=False),
+    sa.Column('profile_photo', sa.String(), nullable=True),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id')

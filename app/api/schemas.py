@@ -14,7 +14,7 @@ class UserBase(BaseModel):
     username: str | None = None
     first_name: str
     last_name: str | None = None
-    profile_photo: str = Field(default="")
+    profile_photo: str | None = None
 
 class UserModel(UserBase):
     id: int

@@ -8,6 +8,8 @@ from httpx import (
 from app.api.schemas import UserBase
 from app.config import settings
 
+from aiogram import Bot
+
 base_url = settings.BASE_SITE
 
 async def register_user(user: UserBase):
@@ -30,4 +32,15 @@ async def register_user(user: UserBase):
                 "status" : "error",
                 "error" : f"Сбой подключения: {str(e)}"
             }
+        
+async def get_user_photo_url(bot: Bot, user_id: int) -> str | None:
+    result = await bot.get_user_profile_photos(user_id)
+    if not result.photos:
+        return None
+    
+    photo = result.photos[0][-1]
+    file = await bot.get_file(photo.file_id)
+    
+    return f"https://api.telegram.org/file/bot{bot.token}/{file.file_path}"
+    
         
