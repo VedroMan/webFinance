@@ -12,7 +12,15 @@ class Settings(BaseSettings):
     BOT_TOKEN: str
     ADMIN_ID: str
     
-    DB_URL: str = 'sqlite+aiosqlite:///./data/db.sqlite3'
+    DB_NAME: str
+    DB_USER: str
+    DB_PASSWORD: str
+    DB_HOST: str = "localhost"
+    DB_PORT: str = "5432"
+    
+    @property
+    def DB_URL(self) -> str:
+        return f'postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}'
     
     model_config = SettingsConfigDict(
         env_file=os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env")

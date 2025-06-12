@@ -1,8 +1,8 @@
-"""Added nullable for profile_photo column
+"""Switch text to string length 256 symbols
 
-Revision ID: d3a23fa4ac3a
+Revision ID: e36ba5897e9d
 Revises: 
-Create Date: 2025-06-08 14:56:28.716338
+Create Date: 2025-06-12 09:28:43.487527
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'd3a23fa4ac3a'
+revision: str = 'e36ba5897e9d'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -43,7 +43,7 @@ def upgrade() -> None:
     )
     op.create_table('expense_transaction',
     sa.Column('value', sa.Numeric(precision=10, scale=2), nullable=False),
-    sa.Column('comment', sa.Text(length=256), nullable=True),
+    sa.Column('comment', sa.String(length=256), nullable=True),
     sa.Column('wallet_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
@@ -52,7 +52,7 @@ def upgrade() -> None:
     )
     op.create_table('income_transaction',
     sa.Column('value', sa.Numeric(precision=10, scale=2), nullable=False),
-    sa.Column('comment', sa.Text(length=256), nullable=True),
+    sa.Column('comment', sa.String(length=256), nullable=True),
     sa.Column('wallet_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),

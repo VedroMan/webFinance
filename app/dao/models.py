@@ -1,6 +1,6 @@
 
 from decimal import Decimal
-from sqlalchemy import Integer, Text, ForeignKey, Numeric
+from sqlalchemy import BigInteger, String, ForeignKey, Numeric
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.dao.database import Base
@@ -11,7 +11,7 @@ from typing import Optional
 class User(Base):
     __tablename__ = "user"
     
-    telegram_id: Mapped[int] = mapped_column(Integer, unique=True, nullable=False, index=True)
+    telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False, index=True)
     username: Mapped[str | None]
     first_name: Mapped[str]
     last_name: Mapped[str | None]
@@ -35,7 +35,7 @@ class BaseTransaction(Base):
     __abstract__ = True
     
     value: Mapped[Decimal] = mapped_column(Numeric(precision=10, scale=2))
-    comment: Mapped[str | None] = mapped_column(Text(length=256))
+    comment: Mapped[str | None] = mapped_column(String(length=256))
     wallet_id: Mapped[int] = mapped_column(ForeignKey("wallet.id", ondelete="CASCADE"))
     
     

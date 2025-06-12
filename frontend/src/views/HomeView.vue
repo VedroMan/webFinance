@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { faDeleteLeft, faCancel, faCheck, faMessage } from "@fortawesome/free-solid-svg-icons";
+import { faDeleteLeft, faCheck, faMessage } from "@fortawesome/free-solid-svg-icons";
 
 const amount = ref("");
 
@@ -14,11 +14,6 @@ const pressNumber = (num: string) => {
 // Удаление последней цифры
 const deleteLast = () => {
   amount.value = amount.value.slice(0, -1);
-};
-
-// Сброс
-const resetAmount = () => {
-  amount.value = "";
 };
 
 // Формат суммы в BYN
@@ -58,9 +53,6 @@ const formattedAmount = () => {
     <div class="flex gap-4 mt-10 w-full max-w-xs justify-between">
       <button class="flex-1 bg-emerald-500 text-white py-3 rounded-lg text-xl hover:bg-emerald-600 transition">
         <faicon :icon="faCheck" />
-      </button>
-      <button @click="resetAmount" class="flex-1 bg-red-500 text-white py-3 rounded-lg text-xl hover:bg-red-600 transition">
-        <faicon :icon="faCancel" />
       </button>
       <button class="flex-1 bg-blue-500 text-white py-3 rounded-lg text-xl hover:bg-blue-600 transition">
         <faicon :icon="faMessage" />
