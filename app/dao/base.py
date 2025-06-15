@@ -12,9 +12,10 @@ from app.dao.database import Base
 from loguru import logger
 
 T = TypeVar('T', bound=Base)
+S = TypeVar('S', bound=BaseModel)
 
 
-class BaseDAO(Generic[T]):
+class BaseDAO(Generic[T, S]):
     model: type[T]
     
     def __init__(self, session: AsyncSession):
@@ -25,7 +26,7 @@ class BaseDAO(Generic[T]):
     
     # MARK: CRUD
     
-    async def create(self, values: BaseModel):
+    async def create(self, values: S):
         values_dict = values.model_dump(exclude_unset=True)
         logger.info(f"Создание записи {self.model.__name__} с параметрами: {values_dict}")
         try:
@@ -40,7 +41,7 @@ class BaseDAO(Generic[T]):
             raise
         
     
-    async def read(self, filters: BaseModel | None = None):
+    async def read(self, filters: S | None = None):
         filters_dict = filters.model_dump(exclude_unset=True) if filters else {}
         logger.info(f"Поиск всех записей {self.model.__name__} по фильтрам: {filters_dict}")
         try:
@@ -55,7 +56,7 @@ class BaseDAO(Generic[T]):
             raise
     
     
-    async def update(self, filters: BaseModel, values: BaseModel):
+    async def update(self, filters: S, values: S):
         filters_dict = filters.model_dump(exclude_unset=True)
         values_dict = values.model_dump(exclude_unset=True)
         logger.info(f"Обновление записей {self.model.__name__} по фильтрам: {filters_dict} с параметрами: {values_dict}")
@@ -77,7 +78,7 @@ class BaseDAO(Generic[T]):
             raise
     
     
-    async def delete(self, filters: BaseModel):
+    async def delete(self, filters: S):
         filters_dict = filters.model_dump(exclude_unset=True)
         logger.info(f"Удаление записей {self.model.__name__} по фильтрам: {filters_dict}")
         if not filters_dict:
@@ -112,7 +113,7 @@ class BaseDAO(Generic[T]):
             raise
         
         
-    async def find_one_or_none_by_filters(self, filters: BaseModel):
+    async def find_one_or_none_by_filters(self, filters: S):
         filters_dict = filters.model_dump(exclude_unset=True)
         logger.info(f"Поиск одной записи {self.model.__name__} по фильтрам: {filters_dict}")
         try:
@@ -128,7 +129,7 @@ class BaseDAO(Generic[T]):
             raise
         
     
-    async def count(self, filters: BaseModel | None = None):
+    async def count(self, filters: S | None = None):
         filters_dict = filters.model_dump(exclude_unset=True) if filters else {}
         logger.info(f"Подсчёт количества записей {self.model.__name__} по фильтрам: {filters_dict}")
         try:

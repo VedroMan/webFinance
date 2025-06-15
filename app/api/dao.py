@@ -1,4 +1,5 @@
 
+from app.api.schemas import TransactionBase
 from app.dao.base import BaseDAO
 from app.dao.models import (
     User, 
@@ -10,7 +11,10 @@ from app.dao.models import (
 from sqlalchemy.future import select
 from sqlalchemy.orm import joinedload
 
-class UserDAO(BaseDAO[User]):
+from pydantic import BaseModel
+
+
+class UserDAO(BaseDAO[User, BaseModel]):
     model = User
     
     async def get_user_by_telegram_id(self, telegram_id: int) -> User | None:
@@ -19,7 +23,7 @@ class UserDAO(BaseDAO[User]):
         return result.scalar_one_or_none()
 
 
-class WalletDAO(BaseDAO[Wallet]):
+class WalletDAO(BaseDAO[Wallet, BaseModel]):
     model = Wallet
     
     async def get_wallet_by_user_id(self, user_id: int) -> Wallet | None:
@@ -38,8 +42,30 @@ class WalletDAO(BaseDAO[Wallet]):
         return result.scalar_one_or_none()
     
     
-class IncomeTransactionDAO(BaseDAO[IncomeTransaction]):
+class IncomeTransactionDAO(BaseDAO[IncomeTransaction, TransactionBase]):
     model = IncomeTransaction
     
-class ExpenseTransactionDAO(BaseDAO[ExpenseTransaction]):
+    async def create(self, values: TransactionBase) -> IncomeTransaction:
+        wallet = await WalletDAO(self._session).find_one_or_none_by_id(values.wallet_id)
+        if wallet is None:
+            raise ValueError("Кошелёк отсутствует")
+        
+        transaction = await super().create(values)
+        wallet.balance += transaction.value
+        await self._session.flush()
+        return transaction
+    
+    
+class ExpenseTransactionDAO(BaseDAO[ExpenseTransaction, TransactionBase]):
     model = ExpenseTransaction
+    
+    async def create(self, values: TransactionBase) -> ExpenseTransaction:
+        wallet = await WalletDAO(self._session).find_one_or_none_by_id(values.wallet_id)
+        if wallet is None:
+            raise ValueError("Кошелёк не найден")
+        
+        transaction = await super().create(values)
+        wallet.balance -= transaction.value
+        await self._session.flush()
+        return transaction
+        
