@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+* {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+}
+
 html, body {
     @apply bg-white dark:bg-gray-950
 }
